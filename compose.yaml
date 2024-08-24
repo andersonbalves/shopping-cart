@@ -28,6 +28,7 @@ services:
       - "4566:4566"
     volumes:
       - ./apps/zip:/lambdas
+      - ./apps/products/env.sh:/lambdas/env/products.sh
       - ./scripts/localstack/resources:/etc/localstack/init/awsresources
       - ./scripts/localstack/init-aws.sh:/etc/localstack/init/ready.d/init-aws.sh
       - ${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack

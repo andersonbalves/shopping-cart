@@ -1,6 +1,5 @@
 #!/bin/bash
 
-API_NAME=ProductsAPI
 REGION=us-east-1
 STAGE=test
 
@@ -13,13 +12,13 @@ echo "LocalStack is running, starting setup..."
     ${REGION}
 
 /etc/localstack/init/awsresources/lambda.sh \
-    ${API_NAME} \
+    ProductsAPI \
     /lambdas/products.zip \
     products \
     ${REGION}
 
 /etc/localstack/init/awsresources/gateway.sh \
-    ${API_NAME} \
+    ProductsAPI \
     products \
     ${STAGE} \
     ${REGION}
