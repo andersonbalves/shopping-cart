@@ -4,6 +4,7 @@ API_NAME=$1
 PATH_PART=$2
 STAGE=$3
 REGION=$4
+HTTP_METHODS=$5
 
 function fail() {
   echo $2
@@ -48,26 +49,30 @@ RESOURCE_ID=$(
 
 [ $? == 0 ] || fail 2 "Failed: AWS / apigateway / create-resource"
 
-awslocal apigateway put-method \
-  --rest-api-id ${API_ID} \
-  --resource-id ${RESOURCE_ID} \
-  --http-method GET \
-  --authorization-type "NONE" \
-  --region ${REGION}
+IFS=',' read -ra METHODS <<<"$HTTP_METHODS"
 
-[ $? == 0 ] || fail 3 "Failed: AWS / apigateway / put-method"
+for METHOD in "${METHODS[@]}"; do
+  awslocal apigateway put-method \
+    --rest-api-id ${API_ID} \
+    --resource-id ${RESOURCE_ID} \
+    --http-method ${METHOD} \
+    --authorization-type "NONE" \
+    --region ${REGION}
 
-awslocal apigateway put-integration \
-  --rest-api-id ${API_ID} \
-  --resource-id ${RESOURCE_ID} \
-  --http-method GET \
-  --type AWS_PROXY \
-  --integration-http-method POST \
-  --uri arn:aws:apigateway:${REGION}:lambda:path/2015-03-31/functions/${LAMBDA_ARN}/invocations \
-  --passthrough-behavior WHEN_NO_MATCH \
-  --region ${REGION}
+  [ $? == 0 ] || fail 3 "Failed: AWS / apigateway / put-method for ${METHOD}"
 
-[ $? == 0 ] || fail 4 "Failed: AWS / apigateway / put-integration"
+  awslocal apigateway put-integration \
+    --rest-api-id ${API_ID} \
+    --resource-id ${RESOURCE_ID} \
+    --http-method ${METHOD} \
+    --type AWS_PROXY \
+    --integration-http-method POST \
+    --uri arn:aws:apigateway:${REGION}:lambda:path/2015-03-31/functions/${LAMBDA_ARN}/invocations \
+    --passthrough-behavior WHEN_NO_MATCH \
+    --region ${REGION}
+
+  [ $? == 0 ] || fail 4 "Failed: AWS / apigateway / put-integration for ${METHOD}"
+done
 
 awslocal apigateway create-deployment \
   --rest-api-id ${API_ID} \
@@ -78,6 +83,5 @@ awslocal apigateway create-deployment \
 
 ENDPOINT=http://localhost:4566/restapis/${API_ID}/${STAGE}/_user_request_/${PATH_PART}
 
-curl -X GET ${ENDPOINT}
 echo "API URL: ${ENDPOINT}"
 echo "API Gateway created."

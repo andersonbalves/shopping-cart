@@ -1,13 +1,11 @@
 #!/bin/bash
 
-echo "Installing zip"
-apk --no-cache add zip
-echo "Building products lambda"
-cd /app/lambdas/products
-ls -l ./
+LAMBDA_DIRS=("products" "shopping-cart")
 
-GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -tags lambda.norpc -o products main.go
-
-zip products.zip products
-ls -l ./
-mv products.zip ../zip/
+for LAMBDA in "${LAMBDA_DIRS[@]}"; do
+  echo "Building ${LAMBDA} lambda"
+  cd /app/lambdas/${LAMBDA}
+  GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -tags lambda.norpc -o ${LAMBDA} main.go
+  zip ${LAMBDA}.zip ${LAMBDA}
+  mv ${LAMBDA}.zip ../zip/
+done
