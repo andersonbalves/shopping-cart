@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"shopping-cart/repository"
+	"shopping-cart/repository/dynamodb_client"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -29,7 +30,7 @@ func createDbClient() (*dynamodb.Client, error) {
 	return dynamodb.NewFromConfig(cfg), nil
 }
 
-func Handler(dbClient *dynamodb.Client) func(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func Handler(dbClient dynamodb_client.DynamoDBClient) func(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	return func(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 		requestJson, err := json.Marshal(request)
 		if err != nil {

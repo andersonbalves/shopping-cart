@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"shopping-cart/model"
+	"shopping-cart/repository/dynamodb_client"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -14,7 +15,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
 
-func GetCartForUser(dbClient *dynamodb.Client, userId string) (events.APIGatewayProxyResponse, error) {
+var GetCartForUser = func(dbClient dynamodb_client.DynamoDBClient, userId string) (events.APIGatewayProxyResponse, error) {
 	log.Printf("Getting cart for user: %s", userId)
 
 	input := &dynamodb.QueryInput{

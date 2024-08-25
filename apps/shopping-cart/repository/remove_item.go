@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"shopping-cart/repository/dynamodb_client"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -11,7 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
 
-func RemoveItemFromCart(dbClient *dynamodb.Client, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+var RemoveItemFromCart = func(dbClient dynamodb_client.DynamoDBClient, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	userId := request.QueryStringParameters["userId"]
 	productId := request.QueryStringParameters["productId"]
 	log.Printf("Removing item from cart: userId=%s, productId=%s", userId, productId)

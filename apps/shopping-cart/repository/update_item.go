@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"shopping-cart/model"
+	"shopping-cart/repository/dynamodb_client"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -14,7 +15,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
 
-func UpdateItemInCart(dbClient *dynamodb.Client, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+var UpdateItemInCart = func(dbClient dynamodb_client.DynamoDBClient, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	log.Printf("Updating item in cart: %s", request.Body)
 
 	var item model.CartItem
