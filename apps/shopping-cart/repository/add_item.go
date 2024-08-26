@@ -32,6 +32,7 @@ var AddItemToCart = func(dbClient dynamodb_client.DynamoDBClient, request events
 			"ProductId":   &types.AttributeValueMemberS{Value: item.ProductId},
 			"ProductName": &types.AttributeValueMemberS{Value: item.ProductName},
 			"Quantity":    &types.AttributeValueMemberN{Value: fmt.Sprintf("%d", item.Quantity)},
+			"UnitPrice":   &types.AttributeValueMemberN{Value: fmt.Sprintf("%f", item.UnitPrice)},
 		},
 	}
 
