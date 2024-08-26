@@ -1,0 +1,35 @@
+<mat-card id="cart" appearance="raised">
+  <mat-card-header>
+    <mat-card-title>Carrinho de {{ _user }}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-card id="cart-item" *ngFor="let item of cart$ | async" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ item.name }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>Valor: {{ item.price | currency : 'R$' }} </mat-card-content>
+
+      <mat-card-actions align="end">
+        <button mat-mini-fab aria-label="Diminuir quantidade" (click)="minusQuantity(item)">
+          <mat-icon>remove</mat-icon>
+        </button>
+        <button mat-mini-fab aria-label="Quantidade" disabled="">
+          {{ item.quantity }}
+        </button>
+        <button mat-mini-fab aria-label="Aumentar quantidade" (click)="plusQuantity(item)">
+          <mat-icon>add</mat-icon>
+        </button>
+        <button mat-mini-fab aria-label="Remover do carrinho" (click)="removeItem(item.id)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-card-actions>
+
+      <mat-card-footer align="end">
+        <mat-card-subtitle>Total: {{ (item.price * item.quantity) | currency : 'R$' }}</mat-card-subtitle>
+      </mat-card-footer>
+    </mat-card>
+    <mat-card-footer align="end">
+      <mat-card-title>Total: {{total$ | async | currency : 'R$'}}</mat-card-title>
+    </mat-card-footer>
+  </mat-card-content>
+</mat-card>
