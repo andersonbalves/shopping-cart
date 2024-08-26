@@ -1,0 +1,25 @@
+<div class="app-container">
+
+  <mat-drawer-container class="example-container" autosize>
+    <mat-drawer #drawer class="example-sidenav" mode="side" opened position="end">
+      <app-cart [user]="user"></app-cart>
+    </mat-drawer>
+    <mat-drawer-content>
+      <mat-card id="products" appearance="outlined">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-form-field>
+              <mat-label>Usuário</mat-label>
+              <mat-icon matPrefix>account_circle</mat-icon>
+              <input matInput type="text" [(ngModel)]="user" (change)="getCart()">
+            </mat-form-field>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <app-product-list [user]="user"></app-product-list>
+        </mat-card-content>
+      </mat-card>
+    </mat-drawer-content>
+  </mat-drawer-container>
+
+</div>

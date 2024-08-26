@@ -1,0 +1,66 @@
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: productdb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./scripts/mysql:/docker-entrypoint-initdb.d
+    networks:
+      - localnet
+
+  localstack:
+    image: localstack/localstack:latest
+    container_name: localstack
+    environment:
+      SERVICES: dynamodb,lambda,s3,apigateway,logs
+      EDGE_PORT: 4566
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      DEBUG: 1
+    ports:
+      - "4566:4566"
+    volumes:
+      - ./apps/zip:/lambdas
+      - ./apps/products/env.sh:/lambdas/env/products.sh
+      - ./scripts/localstack/resources:/etc/localstack/init/awsresources
+      - ./scripts/localstack/init-aws.sh:/etc/localstack/init/ready.d/init-aws.sh
+      - ${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - localnet
+    tty: true
+    depends_on:
+      lambda-packager:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  lambda-packager:
+    build:
+      context: .
+      dockerfile: ./images/lambda-packager/Dockerfile
+    container_name: lambda-packager
+    volumes:
+      - ./apps:/app/lambdas
+      - ./scripts/golang/package.sh:/app/scripts/package.sh
+    networks:
+      - localnet
+
+volumes:
+  mysql_data:
+  localstack_data:
+
+networks:
+  localnet:
+    driver: bridge

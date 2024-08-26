@@ -1,0 +1,16 @@
+<mat-card id="products" appearance="outlined">
+  <mat-card-content>
+    <mat-card id="item" *ngFor="let product of products" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ product.name }}</mat-card-title>
+        <mat-card-subtitle>{{ product.price | currency : 'R$' }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-actions align="end">
+        <button mat-fab extended aria-label="Adicionar ao carrinho" (click)="addToCart(product)">
+          Adicionar ao carrinho
+          <mat-icon>add_shopping_cart</mat-icon>
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </mat-card-content>
+</mat-card>
