@@ -47,7 +47,9 @@ services:
       start_period: 40s
 
   lambda-packager:
-    build: .
+    build:
+      context: .
+      dockerfile: ./images/lambda-packager/Dockerfile
     container_name: lambda-packager
     volumes:
       - ./apps:/app/lambdas
